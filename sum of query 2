@@ -1,0 +1,45 @@
+void  build(int seg[],int arr[],int index,int low,int high)
+    {
+        if(low==high)
+        {
+            seg[index]=arr[low];
+            return ;
+        }
+        int mid= low + (high-low)/2;
+        build(seg,arr,2*index+1,low,mid);
+        build(seg,arr,2*index+2,mid+1,high);
+        seg[index]=seg[2*index+1]+seg[2*index+2];
+    }
+    int query(int a,int b,int index,int low,int high,int seg[])
+    {
+        if(low>=a and high<=b)return seg[index];
+        if(low>b or high<a) return 0;
+        int mid= low + (high-low)/2;
+        int left=0,right=0;
+        
+         left=query(a,b,2*index+1,low,mid,seg);
+         right=query(a,b,2*index+2,mid+1,high,seg);
+        
+        return left+right;
+        
+    }
+    vector<int> querySum(int n, int arr[], int q, int queries[])
+    {
+        int seg[4*n];
+        build(seg,arr,0,0,n-1);
+ 
+        vector<int> ans;
+        int i=0;
+        while(q>=1)
+        {
+            if(queries[i]>queries[i+1])
+            swap(queries[i],queries[i+1]);
+            
+            ans.push_back( query( queries[i]-1,queries[i+1]-1 ,0,0,n-1,seg) );
+            i+=2;
+            q--;
+        }
+
+        return ans;
+        // code here
+    }
